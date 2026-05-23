@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="immoprojet3.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1954"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Bien" custom_title="0" dock_id="1" table="4,4:mainBien"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011b00ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">-- ===========================
+-- RESET DE LA BASE
+-- ===========================
+DROP TABLE IF EXISTS Vente;
+DROP TABLE IF EXISTS Bien;
+DROP TABLE IF EXISTS Commune;
+DROP TABLE IF EXISTS Departement;
+DROP TABLE IF EXISTS Region;
+
+-- ===========================
+-- TABLE : Region
+-- ===========================
+CREATE TABLE Region (
+    code_region TEXT PRIMARY KEY,
+    nom_region TEXT NOT NULL
+);
+
+-- ===========================
+-- TABLE : Departement
+-- ===========================
+CREATE TABLE Departement (
+    code_departement TEXT PRIMARY KEY,
+    nom_departement TEXT NOT NULL,
+    code_region TEXT NOT NULL,
+    FOREIGN KEY (code_region) REFERENCES Region(code_region)
+);
+
+-- ===========================
+-- TABLE : Commune
+-- ===========================
+CREATE TABLE Commune (
+    id_coddep_codecommune TEXT PRIMARY KEY,
+    code_departement TEXT NOT NULL,
+    code_commune INTEGER NOT NULL,
+    code_postal INTEGER,
+    nom_commune TEXT NOT NULL,
+    population INTEGER,
+    FOREIGN KEY (code_departement) REFERENCES Departement(code_departement)
+);
+
+-- ===========================
+-- TABLE : Bien
+-- ===========================
+CREATE TABLE Bien (
+    id_bien INTEGER PRIMARY KEY,
+    id_coddep_codecommune TEXT NOT NULL,
+    no_voie INTEGER,
+    btq TEXT,
+    type_voie TEXT,
+    voie TEXT,
+    total_piece INTEGER,
+    surface_carrez REAL,
+    surface_local INTEGER,
+    type_local TEXT,
+    FOREIGN KEY (id_coddep_codecommune) REFERENCES Commune(id_coddep_codecommune)
+);
+
+-- ===========================
+-- TABLE : Vente
+-- ===========================
+CREATE TABLE Vente (
+    id_vente INTEGER PRIMARY KEY,
+    id_bien INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    valeur INTEGER,
+    FOREIGN KEY (id_bien) REFERENCES Bien(id_bien)
+);
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
