@@ -93,3 +93,19 @@ Ce choix rend le POC robuste pour une démonstration: le résultat peut être r�
 ## Comment lancer le projet
 
 Le README détaille l'installation locale, le lancement du script de build et l'exécution des tests. Le résultat attendu est un fichier SQLite reproductible, prêt pour les analyses SQL et les captures de présentation.
+
+### Commande principale et interpretation
+
+Commande:
+
+```powershell
+python .\scripts\build_database.py --database .\database\immo_projets.db
+```
+
+Interpretation:
+
+1. le script reconstruit la base complete a partir des sources du dossier data;
+2. il applique le schema relationnel du projet;
+3. il prepare la base pour la partie SQL (extraction des indicateurs demandes par Laplace Immo).
+
+Cette commande est le pivot du perimetre technique: elle relie la partie modelisation (schema), la partie donnees (sources), et la partie exploitation (requetes SQL et resultats).

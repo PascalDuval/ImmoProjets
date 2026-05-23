@@ -28,6 +28,32 @@ Le modele relationnel choisi traite ces points:
 
 En resume: la base sert a passer d'un fichier transactionnel brut a un socle decisionnel coherent.
 
+## Perimetre du projet (source: Laplace immo - projet3.pdf)
+
+Le perimetre du POC est organise en 3 parties progressives:
+
+1. comprehension des donnees et dictionnaire;
+2. conception du schema relationnel normalise;
+3. chargement des donnees et production des requetes SQL avec resultats.
+
+Le projet doit couvrir un besoin metier clair: analyser le marche immobilier francais du 1er semestre 2020 pour produire des indicateurs actionnables (volumes de vente, prix moyens, prix au m2, comparaisons territoriales, evolution trimestrielle).
+
+Les livrables attendus dans le perimetre sont:
+
+1. un dictionnaire de donnees complet (format tableur);
+2. un schema relationnel normalise et justifie;
+3. une base SQLite chargee et verifiee;
+4. un document SQL avec requetes et resultats;
+5. un support de presentation qui synthétise la demarche et les conclusions.
+
+Exemples de questions metier couvertes par le perimetre:
+
+1. nombre total d'appartements vendus sur le semestre;
+2. ventes par region;
+3. top departements au prix/m2;
+4. comparaison 2 pieces vs 3 pieces;
+5. communes avec le plus de transactions rapportees a la population.
+
 ## Arborescence du projet
 
 ```text
@@ -129,6 +155,30 @@ Commande type:
 ```powershell
 python .\scripts\build_database.py --database .\database\immo_projets.db
 ```
+
+Explication detaillee de la commande:
+
+1. python: lance l'interpreteur actif;
+2. .\scripts\build_database.py: execute le point d'entree du pipeline;
+3. --database .\database\immo_projets.db: indique le chemin de sortie de la base SQLite.
+
+Ce que la commande fait concretement:
+
+1. lit les 3 fichiers Excel de reference dans le dossier data;
+2. normalise les formats (codes geographiques, dates, valeurs numeriques);
+3. construit les tables Region, Departement, Commune, Demographie, Bien, Vente;
+4. applique le schema SQL et charge les donnees;
+5. affiche les volumes par table pour verification.
+
+Quand relancer la commande:
+
+1. apres modification de fichiers source dans data;
+2. apres changement du schema SQL;
+3. apres ajustement du pipeline de transformation.
+
+Effet important:
+
+La base de sortie est recreee a chaque execution. La commande est donc idempotente dans son intention (reconstruction propre), mais ecrase l'ancienne base cible.
 
 ### Pipeline de transformation
 
