@@ -21,49 +21,49 @@ La démarche mobilise les principes de modélisation relationnelle (1NF, 2NF, 3N
 9. Validation et qualité
 10. Limites et perspectives
 
-## Problematique base de donnees
+## Problématique base de données
 
-La difficulte principale du projet n'est pas seulement de stocker des ventes, mais de les rendre analysables sans ambiguite dans le temps et dans l'espace.
+La difficulté principale du projet n'est pas seulement de stocker des ventes, mais de les rendre analysables sans ambiguïté dans le temps et dans l'espace.
 
-Le besoin metier se formule ainsi:
+Le besoin métier se formule ainsi:
 
-1. suivre l'evolution des prix immobiliers;
-2. comparer les territoires entre eux (commune, departement, region);
-3. fiabiliser la lecture des resultats pour la decision (zones porteuses, segmentation, ecarts de prix).
+1. suivre l'évolution des prix immobiliers;
+2. comparer les territoires entre eux (commune, département, région);
+3. fiabiliser la lecture des résultats pour la décision (zones porteuses, segmentation, écarts de prix).
 
-Si tout est conserve dans une seule table "plate", on obtient rapidement des problemes:
+Si tout est conservé dans une seule table "plate", on obtient rapidement des problèmes:
 
-- redondance massive des informations geographiques;
-- risque d'incoherence (orthographes et codes differents pour une meme commune);
+- redondance massive des informations géographiques;
+- risque d'incohérence (orthographes et codes différents pour une même commune);
 - jointures analytiques plus complexes et plus fragiles;
-- difficulte a faire evoluer le modele.
+- difficulté à faire évoluer le modèle.
 
-Le modele relationnel choisi traite ces points:
+Le modèle relationnel choisi traite ces points:
 
-- les dimensions administratives sont separees des faits de vente;
-- chaque niveau territorial a sa table dediee;
-- les liens sont explicites via cles primaires/etrangeres;
-- les requetes d'analyse restent lisibles et maintenables.
+- les dimensions administratives sont séparées des faits de vente;
+- chaque niveau territorial a sa table dédiée;
+- les liens sont explicites via clés primaires/étrangères;
+- les requêtes d'analyse restent lisibles et maintenables.
 
-En resume: la base sert a passer d'un fichier transactionnel brut a un socle decisionnel coherent.
+En résumé: la base sert à passer d'un fichier transactionnel brut à un socle décisionnel cohérent.
 
-## Perimetre du projet (source: Laplace immo - projet3.pdf)
+## Périmètre du projet (source: Laplace immo - projet3.pdf)
 
-Le perimetre du POC est organise en 3 parties progressives:
+Le périmètre du POC est organisé en 3 parties progressives:
 
-1. comprehension des donnees et dictionnaire;
-2. conception du schema relationnel normalise;
-3. chargement des donnees et production des requetes SQL avec resultats.
+1. compréhension des données et dictionnaire;
+2. conception du schéma relationnel normalisé;
+3. chargement des données et production des requêtes SQL avec résultats.
 
-Le projet doit couvrir un besoin metier clair: analyser le marche immobilier francais du 1er semestre 2020 pour produire des indicateurs actionnables (volumes de vente, prix moyens, prix au m2, comparaisons territoriales, evolution trimestrielle).
+Le projet doit couvrir un besoin métier clair: analyser le marché immobilier français du 1er semestre 2020 pour produire des indicateurs actionnables (volumes de vente, prix moyens, prix au m2, comparaisons territoriales, évolution trimestrielle).
 
-Les livrables attendus dans le perimetre sont:
+Les livrables attendus dans le périmètre sont:
 
-1. un dictionnaire de donnees complet (format tableur);
-2. un schema relationnel normalise et justifie;
-3. une base SQLite chargee et verifiee;
-4. un document SQL avec requetes et resultats;
-5. un support de presentation qui synthétise la demarche et les conclusions.
+1. un dictionnaire de données complet (format tableur);
+2. un schéma relationnel normalisé et justifié;
+3. une base SQLite chargée et vérifiée;
+4. un document SQL avec requêtes et résultats;
+5. un support de présentation qui synthétise la démarche et les conclusions.
 
 ### Périmètre inclus
 
@@ -79,13 +79,13 @@ Les livrables attendus dans le perimetre sont:
 - exposition BI en production multi-utilisateur;
 - gouvernance de données à l'échelle SI complet.
 
-Exemples de questions metier couvertes par le perimetre:
+Exemples de questions métier couvertes par le périmètre:
 
 1. nombre total d'appartements vendus sur le semestre;
-2. ventes par region;
-3. top departements au prix/m2;
-4. comparaison 2 pieces vs 3 pieces;
-5. communes avec le plus de transactions rapportees a la population.
+2. ventes par région;
+3. top départements au prix/m2;
+4. comparaison 2 pièces vs 3 pièces;
+5. communes avec le plus de transactions rapportées à la population.
 
 ## Arborescence du projet
 
@@ -127,7 +127,7 @@ dataprojet3/
 └─ README.md
 ```
 
-## Ce que contient le depot
+## Ce que contient le dépôt
 
 - les sources de données brutes dans `data/`
 - le schéma relationnel SQLite dans `sql/schema.sql`
@@ -138,23 +138,23 @@ dataprojet3/
 
 Le dossier `docus/` est ignoré volontairement via `.gitignore`.
 
-## Modele de donnees choisi
+## Modèle de données choisi
 
-Le modele suit une logique en etoile normalisee autour de la transaction immobiliere:
+Le modèle suit une logique en étoile normalisée autour de la transaction immobilière:
 
 - Region est le niveau territorial le plus haut.
-- Departement depend de Region via code_region.
-- Commune depend de Departement via code_departement.
-- Demographie stocke uniquement la population par commune pour separer les faits demographiques de la description administrative.
-- Bien represente l'actif immobilier (adresse, type, surfaces, pieces).
-- Vente represente l'evenement de mutation (date et valeur) et pointe vers Bien.
+- Departement dépend de Region via code_region.
+- Commune dépend de Departement via code_departement.
+- Demographie stocke uniquement la population par commune pour séparer les faits démographiques de la description administrative.
+- Bien représente l'actif immobilier (adresse, type, surfaces, pièces).
+- Vente représente l'événement de mutation (date et valeur) et pointe vers Bien.
 
 Pourquoi ce choix:
 
-- il evite les redondances (nom de region/departement non repete dans chaque ligne de vente);
-- il simplifie les analyses multi-niveaux (commune -> departement -> region);
-- il garantit l'integrite des liens grace aux cles etrangeres;
-- il permet d'ajouter des dimensions futures (ex: indicateurs socio-economiques) sans casser les requetes existantes.
+- il évite les redondances (nom de région/département non répété dans chaque ligne de vente);
+- il simplifie les analyses multi-niveaux (commune -> département -> région);
+- il garantit l'intégrité des liens grâce aux clés étrangères;
+- il permet d'ajouter des dimensions futures (ex: indicateurs socio-économiques) sans casser les requêtes existantes.
 
 Relations principales:
 
@@ -168,7 +168,7 @@ Exemple de parcours analytique:
 
 1. on part de Vente pour calculer un prix moyen;
 2. on joint Bien pour retrouver la commune;
-3. on joint Commune puis Departement puis Region pour agregation territoriale.
+3. on joint Commune puis Departement puis Region pour agrégation territoriale.
 
 ## Méthodologie d'implémentation
 
@@ -191,13 +191,13 @@ La méthodologie suit une logique de recherche appliquée en ingénierie des don
 
 ### Script principal
 
-Le fichier `scripts/build_database.py` est le point d'entree du projet.
+Le fichier `scripts/build_database.py` est le point d'entrée du projet.
 
 Ce script:
 
 1. lit les arguments CLI (`--data-dir`, `--database`, `--schema`);
 2. appelle le pipeline dans `src/immo_projets/pipeline.py`;
-3. reconstruit entierement la base SQLite cible;
+3. reconstruit entièrement la base SQLite cible;
 4. affiche les volumes de lignes par table en sortie.
 
 Commande type:
@@ -206,49 +206,49 @@ Commande type:
 python .\scripts\build_database.py --database .\database\immo_projets.db
 ```
 
-Explication detaillee de la commande:
+Explication détaillée de la commande:
 
-1. python: lance l'interpreteur actif;
-2. .\scripts\build_database.py: execute le point d'entree du pipeline;
+1. python: lance l'interpréteur actif;
+2. .\scripts\build_database.py: exécute le point d'entrée du pipeline;
 3. --database .\database\immo_projets.db: indique le chemin de sortie de la base SQLite.
 
-Ce que la commande fait concretement:
+Ce que la commande fait concrètement:
 
-1. lit les 3 fichiers Excel de reference dans le dossier data;
-2. normalise les formats (codes geographiques, dates, valeurs numeriques);
+1. lit les 3 fichiers Excel de référence dans le dossier data;
+2. normalise les formats (codes géographiques, dates, valeurs numériques);
 3. construit les tables Region, Departement, Commune, Demographie, Bien, Vente;
 4. applique le schema SQL et charge les donnees;
-5. affiche les volumes par table pour verification.
+5. affiche les volumes par table pour vérification.
 
 Quand relancer la commande:
 
-1. apres modification de fichiers source dans data;
-2. apres changement du schema SQL;
-3. apres ajustement du pipeline de transformation.
+1. après modification de fichiers source dans data;
+2. après changement du schéma SQL;
+3. après ajustement du pipeline de transformation.
 
 Effet important:
 
-La base de sortie est recreee a chaque execution. La commande est donc idempotente dans son intention (reconstruction propre), mais ecrase l'ancienne base cible.
+La base de sortie est recréée à chaque exécution. La commande est donc idempotente dans son intention (reconstruction propre), mais écrase l'ancienne base cible.
 
 ### Pipeline de transformation
 
-Le module `src/immo_projets/pipeline.py` est decoupe en fonctions metier claires:
+Le module `src/immo_projets/pipeline.py` est découpé en fonctions métier claires:
 
 - `load_source_workbooks`: charge les 3 classeurs sources par motifs de nom;
-- `prepare_region_table`: fabrique le referentiel Region;
+- `prepare_region_table`: fabrique le référentiel Region;
 - `prepare_departement_table`: fabrique Departement;
-- `prepare_commune_tables`: cree Commune et Demographie;
-- `prepare_bien_table`: prepare les attributs des biens;
-- `prepare_vente_table`: prepare les ventes (date, valeur, id_bien);
+- `prepare_commune_tables`: crée Commune et Demographie;
+- `prepare_bien_table`: prépare les attributs des biens;
+- `prepare_vente_table`: prépare les ventes (date, valeur, id_bien);
 - `create_sqlite_database`: applique schema.sql et charge les tables;
 - `build_project_database`: orchestre le tout.
 
-Points de fiabilite importants:
+Points de fiabilité importants:
 
-- normalisation des codes geographiques en texte zero-padde;
-- generation deterministe des ids metier (`id_bien`, `id_vente`);
-- recreation complete de la base a chaque run (pas d'etat cache);
-- chargement dans l'ordre des dependances de cles etrangeres.
+- normalisation des codes géographiques en texte zero-padde;
+- génération déterministe des ids métier (`id_bien`, `id_vente`);
+- recréation complète de la base à chaque run (pas d'état cache);
+- chargement dans l'ordre des dépendances de clés étrangères.
 
 ## Validation et qualité
 
@@ -271,46 +271,46 @@ $env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'
 pytest
 ```
 
-## Comment utiliser les fichiers afferents
+## Comment utiliser les fichiers afférents
 
-### Fichiers d'entree
+### Fichiers d'entrée
 
-- `data/Valeurs-foncieres.xlsx`: source principale des ventes et des caracteristiques de biens.
+- `data/Valeurs-foncieres.xlsx`: source principale des ventes et des caractéristiques de biens.
 - `data/donnees_communes.xlsx`: source population par commune.
-- `data/fr-esr-referentiel-geographique.xlsx`: referentiel region/departement/commune.
+- `data/fr-esr-referentiel-geographique.xlsx`: référentiel region/departement/commune.
 
-Ces trois fichiers sont lus par le pipeline et transformes en tables SQL.
+Ces trois fichiers sont lus par le pipeline et transformés en tables SQL.
 
 ### Fichiers de transformation
 
-- `src/immo_projets/pipeline.py`: logique metier de nettoyage, normalisation et preparation.
-- `scripts/build_database.py`: commande executable pour creer/recreer la base.
+- `src/immo_projets/pipeline.py`: logique métier de nettoyage, normalisation et préparation.
+- `scripts/build_database.py`: commande exécutable pour créer/recréer la base.
 
-Quand vous lancez le script, il lit les fichiers d'entree, fabrique les tables cibles, puis ecrit la base SQLite complete.
+Quand vous lancez le script, il lit les fichiers d'entrée, fabrique les tables cibles, puis écrit la base SQLite complète.
 
 ### Fichiers de structure SQL
 
-- `sql/schema.sql`: definition officielle des tables et des contraintes.
+- `sql/schema.sql`: définition officielle des tables et des contraintes.
 
-Ce fichier est la reference du schema relationnel. Si vous ajoutez une table, vous devez d'abord la declarer ici puis adapter le pipeline.
+Ce fichier est la référence du schéma relationnel. Si vous ajoutez une table, vous devez d'abord la déclarer ici puis adapter le pipeline.
 
 ### Fichiers de sortie
 
 - `database/immo_projets.db`: base construite automatiquement.
 
-Vous pouvez l'ouvrir avec DB Browser for SQLite, SQLiteStudio, DBeaver, ou via Python/SQL pour lancer vos requetes.
+Vous pouvez l'ouvrir avec DB Browser for SQLite, SQLiteStudio, DBeaver, ou via Python/SQL pour lancer vos requêtes.
 
 ### Fichiers de validation
 
 - `tests/test_pipeline.py`: tests unitaires de transformation et d'insertion.
 
-Ils servent a verifier qu'une modification n'introduit pas de regression sur les regles de nettoyage, les identifiants, ou la creation de base.
+Ils servent à vérifier qu'une modification n'introduit pas de régression sur les règles de nettoyage, les identifiants, ou la création de base.
 
 ### Fichiers legacy
 
 - `notebooks/legacy/`, `sql/legacy/`, `documentation/legacy/`, `database/legacy/`.
 
-Ces dossiers conservent l'historique du projet (anciennes versions notebook/sql/base). Ils ne sont pas utilises par le pipeline courant, mais utiles pour tracer l'evolution du POC.
+Ces dossiers conservent l'historique du projet (anciennes versions notebook/sql/base). Ils ne sont pas utilisés par le pipeline courant, mais utiles pour tracer l'évolution du POC.
 
 ## Mise en route
 
@@ -334,7 +334,7 @@ python -m pip install -r requirements.txt
 python .\scripts\build_database.py --database .\database\immo_projets.db
 ```
 
-Le script lit automatiquement les classeurs Excel presents dans `data/`, prepare les tables `Region`, `Departement`, `Commune`, `Demographie`, `Bien` et `Vente`, puis genere une base SQLite complete.
+Le script lit automatiquement les classeurs Excel présents dans `data/`, prépare les tables `Region`, `Departement`, `Commune`, `Demographie`, `Bien` et `Vente`, puis génère une base SQLite complète.
 
 4. Lancer les tests.
 
@@ -347,10 +347,10 @@ Si votre environnement charge un plugin pytest externe cassé, gardez la variabl
 
 ## Choix techniques
 
-- Les identifiants metier sont stabilises avant insertion: `id_bien` et `id_vente` suivent l'ordre des lignes nettoyees du jeu de transactions.
-- La population est isolee dans `Demographie` pour garder un schema normalise et eviter de melanger geographie et demographie.
-- Le chargement SQLite est rejouable: la base est recreee a chaque execution du script.
-- Les noms de fichiers Excel sont detectes par motif, ce qui evite de dependre des accents dans les chemins.
+- Les identifiants métier sont stabilisés avant insertion: `id_bien` et `id_vente` suivent l'ordre des lignes nettoyées du jeu de transactions.
+- La population est isolée dans `Demographie` pour garder un schéma normalisé et éviter de mélanger géographie et démographie.
+- Le chargement SQLite est rejouable: la base est recréée à chaque exécution du script.
+- Les noms de fichiers Excel sont détectés par motif, ce qui évite de dépendre des accents dans les chemins.
 
 ## Limites et perspectives
 
