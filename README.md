@@ -2,6 +2,25 @@
 
 Projet POC de data engineering immobilier pour analyser les transactions foncières en France et préparer une base SQLite normalisée exploitable localement.
 
+## Résumé académique
+
+Ce projet s'inscrit dans un cadre de preuve de concept (POC) pour Laplace Immo. L'objectif est de démontrer qu'un corpus hétérogène de données immobilières peut être transformé en une base relationnelle cohérente, interrogeable et reproductible, afin de soutenir l'analyse du marché résidentiel.
+
+La démarche mobilise les principes de modélisation relationnelle (1NF, 2NF, 3NF), de qualité de données (normalisation des formats, contrôles de cohérence), et de reproductibilité (pipeline relançable, schéma versionné, tests unitaires).
+
+## Sommaire
+
+1. Problématique base de données
+2. Périmètre du projet
+3. Arborescence du projet
+4. Modèle de données choisi
+5. Méthodologie d'implémentation
+6. Fonctionnement des scripts
+7. Utilisation des fichiers afférents
+8. Mise en route
+9. Validation et qualité
+10. Limites et perspectives
+
 ## Problematique base de donnees
 
 La difficulte principale du projet n'est pas seulement de stocker des ventes, mais de les rendre analysables sans ambiguite dans le temps et dans l'espace.
@@ -45,6 +64,20 @@ Les livrables attendus dans le perimetre sont:
 3. une base SQLite chargee et verifiee;
 4. un document SQL avec requetes et resultats;
 5. un support de presentation qui synthétise la demarche et les conclusions.
+
+### Périmètre inclus
+
+- préparation des sources et dictionnaire des données;
+- modélisation relationnelle normalisée;
+- création et chargement d'une base SQLite;
+- rédaction des requêtes SQL d'analyse et interprétation des résultats.
+
+### Périmètre non inclus
+
+- industrialisation cloud (orchestration type Airflow/DBT en production);
+- ingestion incrémentale temps réel;
+- exposition BI en production multi-utilisateur;
+- gouvernance de données à l'échelle SI complet.
 
 Exemples de questions metier couvertes par le perimetre:
 
@@ -137,6 +170,23 @@ Exemple de parcours analytique:
 2. on joint Bien pour retrouver la commune;
 3. on joint Commune puis Departement puis Region pour agregation territoriale.
 
+## Méthodologie d'implémentation
+
+La méthodologie suit une logique de recherche appliquée en ingénierie des données:
+
+1. analyse des sources et des contraintes de qualité;
+2. formulation d'un schéma cible normalisé;
+3. implémentation du pipeline de transformation;
+4. vérification par tests unitaires et contrôles d'intégrité;
+5. validation des sorties par requêtes métier.
+
+### Principes méthodologiques retenus
+
+- traçabilité: séparation claire entre sources, transformation, schéma et sortie;
+- reproductibilité: une commande unique permet de reconstruire la base;
+- explicabilité: le modèle favorise des jointures lisibles pour les analyses;
+- robustesse: les règles de normalisation sont testées automatiquement.
+
 ## Fonctionnement des scripts
 
 ### Script principal
@@ -199,6 +249,27 @@ Points de fiabilite importants:
 - generation deterministe des ids metier (`id_bien`, `id_vente`);
 - recreation complete de la base a chaque run (pas d'etat cache);
 - chargement dans l'ordre des dependances de cles etrangeres.
+
+## Validation et qualité
+
+La validation repose sur deux niveaux complémentaires:
+
+1. validation technique
+- exécution des tests unitaires sur le pipeline;
+- vérification de la création de la base sans erreur;
+- contrôle des volumes de lignes par table.
+
+2. validation analytique
+- exécution de requêtes métier représentatives;
+- contrôle de cohérence des agrégations territoriales;
+- comparaison des résultats avec les attentes du cahier des charges.
+
+Commande recommandée pour les tests dans cet environnement:
+
+```powershell
+$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'
+pytest
+```
 
 ## Comment utiliser les fichiers afferents
 
@@ -280,3 +351,18 @@ Si votre environnement charge un plugin pytest externe cassé, gardez la variabl
 - La population est isolee dans `Demographie` pour garder un schema normalise et eviter de melanger geographie et demographie.
 - Le chargement SQLite est rejouable: la base est recreee a chaque execution du script.
 - Les noms de fichiers Excel sont detectes par motif, ce qui evite de dependre des accents dans les chemins.
+
+## Limites et perspectives
+
+### Limites du POC
+
+- périmètre temporel centré sur les ventes 2020 disponibles;
+- base locale SQLite, adaptée au prototypage mais non destinée à la montée en charge;
+- transformations orientées batch complet, sans stratégie incrémentale.
+
+### Perspectives d'évolution
+
+1. migration vers un moteur SQL orienté production (PostgreSQL);
+2. ingestion incrémentale et historisation des chargements;
+3. enrichissement des dimensions (socio-économie, typologies territoriales);
+4. publication d'indicateurs via tableau de bord BI.

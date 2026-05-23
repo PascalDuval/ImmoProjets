@@ -4,6 +4,17 @@ Laplace Immo souhaite industrialiser l'exploitation des transactions immobilièr
 
 Le projet est pensé comme un POC: il doit prouver la faisabilité du modèle de données, de la transformation et du chargement dans une base exploitable avant un passage à l'échelle.
 
+## Objectif académique du POC
+
+Au-delà de la réalisation technique, le projet vise à démontrer une démarche d'ingénierie des données structurée:
+
+1. formaliser une problématique métier en objets de données;
+2. appliquer les principes de normalisation relationnelle;
+3. implémenter un pipeline reproductible;
+4. évaluer la qualité des résultats par des requêtes de validation.
+
+Le livrable final doit donc être à la fois opérationnel (base exécutable) et démonstratif (justification méthodologique des choix).
+
 ## Problématique base de données
 
 Le besoin ne se limite pas à "stocker" des transactions immobilières. L'enjeu est de construire une base qui permette des analyses fiables, comparables et rejouables.
@@ -16,6 +27,15 @@ Les difficultés principales sont:
 - la conservation d'un modèle qui reste lisible pour les analyses SQL métier.
 
 La réponse apportée par ce POC est un schéma relationnel normalisé avec des clés explicites, une chaîne de transformation reproductible et des contrôles unitaires. Ce triptyque garantit que le résultat final (la base SQLite) est utilisable pour la décision et pas seulement pour l'archivage.
+
+## Critères de succès
+
+Le projet est considéré comme abouti lorsque les conditions suivantes sont remplies:
+
+1. cohérence du modèle relationnel avec les besoins d'analyse exprimés;
+2. reproductibilité du chargement par une commande unique;
+3. intégrité des relations entre tables (clés primaires et étrangères);
+4. capacité à produire les indicateurs métier attendus via SQL.
 
 ## Données sources
 
