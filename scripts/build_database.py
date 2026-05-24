@@ -25,13 +25,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--database",
         type=Path,
-        default=PROJECT_ROOT / "database" / "immo_projets.db",
+        default=PROJECT_ROOT / "modele_donnees_sql" / "database" / "immo_projets.db",
         help="Chemin du fichier SQLite à générer.",
     )
     parser.add_argument(
         "--schema",
         type=Path,
-        default=PROJECT_ROOT / "sql" / "schema.sql",
+        default=PROJECT_ROOT / "modele_donnees_sql" / "sql" / "schema.sql",
         help="Chemin du schéma SQL à appliquer.",
     )
     return parser.parse_args()

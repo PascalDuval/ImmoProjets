@@ -159,7 +159,7 @@ def test_create_sqlite_database_roundtrip(tmp_path: Path):
     }
 
     database_path = tmp_path / "immo.db"
-    schema_path = Path(__file__).resolve().parents[1] / "sql" / "schema.sql"
+    schema_path = Path(__file__).resolve().parents[1] / "modele_donnees_sql" / "sql" / "schema.sql"
     create_sqlite_database(database_path, tables, schema_path=schema_path)
 
     with sqlite3.connect(database_path) as connection:

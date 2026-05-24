@@ -4,4 +4,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .venv/
-database/
+modele_donnees_sql/database/

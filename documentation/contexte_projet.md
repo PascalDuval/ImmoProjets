@@ -119,7 +119,7 @@ Le README détaille l'installation locale, le lancement du script de build et l'
 Commande:
 
 ```powershell
-python .\scripts\build_database.py --database .\database\immo_projets.db
+python .\scripts\build_database.py --database .\modele_donnees_sql\database\immo_projets.db
 ```
 
 Interpretation:

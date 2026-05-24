@@ -100,10 +100,15 @@ dataprojet3/
 │  ├─ Departement.csv
 │  ├─ Region.csv
 │  ├─ Vente.csv
-│  └─ Autre/
-├─ database/
-│  ├─ immo_projets.db
-│  └─ legacy/
+├─ modele_donnees_sql/
+│  ├─ ImmoLapeyre.architect
+│  ├─ immoprojet3.sqbpro
+│  ├─ database/
+│  │  ├─ immo_projets.db
+│  │  └─ legacy/
+│  └─ sql/
+│     ├─ schema.sql
+│     └─ legacy/
 ├─ documentation/
 │  ├─ contexte_projet.md
 │  ├─ CR_reunion.pdf
@@ -112,9 +117,6 @@ dataprojet3/
 │  └─ legacy/
 ├─ scripts/
 │  └─ build_database.py
-├─ sql/
-│  ├─ schema.sql
-│  └─ legacy/
 ├─ src/
 │  └─ immo_projets/
 │     ├─ __init__.py
@@ -130,13 +132,30 @@ dataprojet3/
 ## Ce que contient le dépôt
 
 - les sources de données brutes dans `data/`
-- le schéma relationnel SQLite dans `sql/schema.sql`
+- le schéma relationnel SQLite dans `modele_donnees_sql/sql/schema.sql`
+- les artefacts de modélisation dans `modele_donnees_sql/` (`.architect`, `.sqbpro`)
 - le pipeline de préparation dans `src/immo_projets/pipeline.py`
 - le script d'exécution dans `scripts/build_database.py`
 - les tests unitaires dans `tests/`
 - une note métier détaillée dans `documentation/contexte_projet.md`
 
 Le dossier `docus/` est ignoré volontairement via `.gitignore`.
+
+## Dossier spécial modèle de données et SQL
+
+Tous les éléments liés au modèle de données et au SQL sont maintenant centralisés dans `modele_donnees_sql/`:
+
+- `modele_donnees_sql/sql/schema.sql`: schéma relationnel de référence.
+- `modele_donnees_sql/sql/legacy/`: anciens scripts SQL conservés pour historique.
+- `modele_donnees_sql/database/immo_projets.db`: base SQLite générée.
+- `modele_donnees_sql/database/legacy/`: anciennes bases de travail.
+- `modele_donnees_sql/*.architect` et `modele_donnees_sql/*.sqbpro`: fichiers de modélisation.
+
+Impact pratique:
+
+1. Les commandes de build utilisent désormais `modele_donnees_sql/database/` pour la sortie SQLite.
+2. Le script de build utilise `modele_donnees_sql/sql/schema.sql` comme schéma par défaut.
+3. Les anciens chemins `sql/` et `database/` à la racine ne sont plus utilisés.
 
 ## Modèle de données choisi
 
@@ -203,14 +222,14 @@ Ce script:
 Commande type:
 
 ```powershell
-python .\scripts\build_database.py --database .\database\immo_projets.db
+python .\scripts\build_database.py --database .\modele_donnees_sql\database\immo_projets.db
 ```
 
 Explication détaillée de la commande:
 
 1. python: lance l'interpréteur actif;
 2. .\scripts\build_database.py: exécute le point d'entrée du pipeline;
-3. --database .\database\immo_projets.db: indique le chemin de sortie de la base SQLite.
+3. --database .\modele_donnees_sql\database\immo_projets.db: indique le chemin de sortie de la base SQLite.
 
 Ce que la commande fait concrètement:
 
@@ -290,13 +309,13 @@ Quand vous lancez le script, il lit les fichiers d'entrée, fabrique les tables 
 
 ### Fichiers de structure SQL
 
-- `sql/schema.sql`: définition officielle des tables et des contraintes.
+- `modele_donnees_sql/sql/schema.sql`: définition officielle des tables et des contraintes.
 
 Ce fichier est la référence du schéma relationnel. Si vous ajoutez une table, vous devez d'abord la déclarer ici puis adapter le pipeline.
 
 ### Fichiers de sortie
 
-- `database/immo_projets.db`: base construite automatiquement.
+- `modele_donnees_sql/database/immo_projets.db`: base construite automatiquement.
 
 Vous pouvez l'ouvrir avec DB Browser for SQLite, SQLiteStudio, DBeaver, ou via Python/SQL pour lancer vos requêtes.
 
@@ -308,7 +327,7 @@ Ils servent à vérifier qu'une modification n'introduit pas de régression sur 
 
 ### Fichiers legacy
 
-- `notebooks/legacy/`, `sql/legacy/`, `documentation/legacy/`, `database/legacy/`.
+- `notebooks/legacy/`, `modele_donnees_sql/sql/legacy/`, `documentation/legacy/`, `modele_donnees_sql/database/legacy/`.
 
 Ces dossiers conservent l'historique du projet (anciennes versions notebook/sql/base). Ils ne sont pas utilisés par le pipeline courant, mais utiles pour tracer l'évolution du POC.
 
@@ -331,7 +350,7 @@ python -m pip install -r requirements.txt
 3. Construire la base SQLite.
 
 ```powershell
-python .\scripts\build_database.py --database .\database\immo_projets.db
+python .\scripts\build_database.py --database .\modele_donnees_sql\database\immo_projets.db
 ```
 
 Le script lit automatiquement les classeurs Excel présents dans `data/`, prépare les tables `Region`, `Departement`, `Commune`, `Demographie`, `Bien` et `Vente`, puis génère une base SQLite complète.
